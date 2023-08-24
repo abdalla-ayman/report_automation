@@ -168,7 +168,7 @@ async function generateExcelSheet(group) {
     ws.cell(rowCounter, 28).number(net_total).style(style);
   }
 
-  wb.write(path.join(__dirname, "dist", `${group}.xlsx`));
+  wb.write(path.join(__dirname, "..","dist", `${group}.xlsx`));
 }
 
 module.exports = generateExcelSheet;

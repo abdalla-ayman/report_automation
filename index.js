@@ -19,9 +19,9 @@ async function main() {
     app.use(express.static(path.join(__dirname, "dist")));
 
     app.use("/api", routes);
-    app.get("*", (req, res) => {
-      res.sendFile(path.join(__dirname, "dist", "index.html"));
-    });
+    // app.get("*", (req, res) => {
+    //   res.sendFile(path.join(__dirname, "dist", "index.html"));
+    // });
     app.listen(PORT, () => console.log("server is running"));
   } catch (error) {
     console.log(error);

@@ -109,13 +109,13 @@ async function generateExcelSheet(group) {
   ws.cell(4, 1, 5, 4, true).string("الاسم").style(header_style);
 
   // the day of the week col header
-  ws.cell(4, 5, 4, 8, true).string("السبت").style(header_style);
-  ws.cell(4, 9, 4, 11, true).string("الاحد").style(header_style);
-  ws.cell(4, 12, 4, 14, true).string("الاثنين").style(header_style);
-  ws.cell(4, 15, 4, 17, true).string("الثلاثاء").style(header_style);
-  ws.cell(4, 18, 4, 20, true).string("الاربعاء").style(header_style);
-  ws.cell(4, 21, 4, 23, true).string("الخميس").style(header_style);
-  ws.cell(4, 24, 4, 26, true).string("الجمعة").style(header_style);
+  ws.cell(4, 5, 4, 7, true).string("السبت").style(header_style);
+  ws.cell(4, 8, 4, 10, true).string("الاحد").style(header_style);
+  ws.cell(4, 11, 4, 13, true).string("الاثنين").style(header_style);
+  ws.cell(4, 14, 4, 16, true).string("الثلاثاء").style(header_style);
+  ws.cell(4, 17, 4, 19, true).string("الاربعاء").style(header_style);
+  ws.cell(4, 20, 4, 22, true).string("الخميس").style(header_style);
+  ws.cell(4, 23, 4, 25, true).string("الجمعة").style(header_style);
 
   // how many pages in each day (old, new , past)
 
@@ -130,11 +130,11 @@ async function generateExcelSheet(group) {
   }
 
   //summations
-  ws.cell(5, 27).string("م ج").style(header_style);
-  ws.cell(5, 28).string("م ق").style(header_style);
-  ws.cell(5, 29).string("م ك").style(header_style);
-  ws.cell(5, 30).string("م ج ك").style(header_style);
-  ws.cell(5, 31).string("م ك").style(header_style);
+  ws.cell(5, 26).string("م ج").style(header_style);
+  ws.cell(5, 27).string("م ق").style(header_style);
+  ws.cell(5, 28).string("م ك").style(header_style);
+  ws.cell(5, 29).string("م ج ك").style(header_style);
+  ws.cell(5, 30).string("م ك").style(header_style);
 
   let users = await User.find({ group }, ["_id", "fullname"]);
   let group_reports = [];
@@ -160,9 +160,13 @@ async function generateExcelSheet(group) {
       .style(style);
 
     for (let report of user_report.reports) {
+      let current = report.current_str
+        ? report.current_end - report.current_str + 1
+        : 0;
+      let past = report.past ? 20 : 0;
       new_total += report.new_no;
       net_new += report.new_no * 10;
-      past_total += report.past + report.current_end - report.current_str + 1;
+      past_total += past + current;
       old_total += report.old.length * 20;
 
       net_total +=
@@ -182,18 +186,18 @@ async function generateExcelSheet(group) {
         .number(report.new_no)
         .style(style);
       ws.cell(rowCounter, 4 + theDayOfTheWeek * 3)
-        .number(report.past + report.current_end - report.current_str + 1)
+        .number(past + current)
         .style(style);
       ws.cell(rowCounter, 5 + theDayOfTheWeek * 3)
         .number(report.old.length * 20)
         .style(style);
     }
 
-    ws.cell(rowCounter, 27).number(new_total).style(style);
-    ws.cell(rowCounter, 28).number(old_total).style(style);
-    ws.cell(rowCounter, 29).number(past_total).style(style);
-    ws.cell(rowCounter, 30).number(net_new).style(style);
-    ws.cell(rowCounter, 31).number(net_total).style(style);
+    ws.cell(rowCounter, 26).number(new_total).style(style);
+    ws.cell(rowCounter, 27).number(old_total).style(style);
+    ws.cell(rowCounter, 28).number(past_total).style(style);
+    ws.cell(rowCounter, 29).number(net_new).style(style);
+    ws.cell(rowCounter, 30).number(net_total).style(style);
   }
 
   wb.write(path.join(__dirname, "..", "dist", `${group}.xlsx`));

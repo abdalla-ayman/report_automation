@@ -18,8 +18,7 @@ const register = async (req, res) => {
       group,
     });
 
-    console.log(user);
-    res.end();
+    res.sendStatus(200);
   } catch (error) {
     console.log(error);
   }
@@ -27,7 +26,7 @@ const register = async (req, res) => {
 
 const report = async (req, res) => {
   try {
-    const {
+    let {
       username,
       passkey,
       awjoh,
@@ -38,6 +37,8 @@ const report = async (req, res) => {
       old,
       shekh,
       date,
+      repeat_no,
+      repeats,
     } = req.body;
 
     //if user not register return error 400
@@ -46,6 +47,17 @@ const report = async (req, res) => {
     let user = await User.findOne({ username }, ["_id", "passkey"]);
 
     if (user.passkey != passkey) return res.sendStatus(401);
+
+    // add repeated joz to old
+    if (repeat_no) {
+      repeats.forEach((element) => {
+        if (element.joz && element.repeats) {
+          for (let i = 0; i < element.repeats; i++) {
+            old.push(element.joz);
+          }
+        }
+      });
+    }
 
     let report_body = {
       user: user._id,
@@ -72,7 +84,7 @@ const report = async (req, res) => {
       }
     );
 
-    res.end();
+    res.sendStatus(200);
   } catch (error) {
     res.end();
     console.log(error);
@@ -83,8 +95,7 @@ const generateWeekReport = async (req, res) => {
   try {
     let { group } = req.body;
     await generateExcel(group);
-    res.sendStatus(200)
-    
+    res.sendStatus(200);
   } catch (error) {
     console.log(error);
   }
